@@ -11,3 +11,14 @@ This module implements the ThanosEffect using the Android Canvas API. While this
 
 ## ThanosEffect-OpenGL
 This module implements the ThanosEffect using OpenGL ES, which provides better performance for rendering complex animations compared to Canvas.
+
+## Implementation: Update Function
+The update function is crucial for animating each particle in the ThanosEffect. It calculates the new position, radius, and transparency of each particle over time based on its initial properties and elapsed time.
+Note that the formulas in the picture are simplified, and the actual implementation also incorporates randomness for more natural and varied animations.
+
+<img src='./formulas.png' width=600/>
+
+## Tutorial
+You can watch a detailed tutorial on how to implement the ThanosEffect here. This tutorial covers the step-by-step process, explaining both the Canvas and OpenGL implementations, and provides insights into optimizing performance and adding randomness for a more realistic effect.
+
+By following the tutorial, you'll gain a deeper understanding of the concepts and techniques used to create complex animations.
