@@ -4,7 +4,7 @@ This repository contains two modules, **ThanosEffect-Canvas** and **ThanosEffect
 
 This implementation was created for Telegram Android UI contest. The implementation on the Telegram source can be found [here](https://github.com/Aghajari/Telegram-DustEffect-Implementation).
 
-<img src='./preview.gif' width=200/>
+<img src='./preview.gif' height=500/>
 
 ## ThanosEffect-Canvas
 This module implements the ThanosEffect using the Android Canvas API. While this approach is straightforward and easy to implement, it can suffer from performance issues when handling a large number of particles.
