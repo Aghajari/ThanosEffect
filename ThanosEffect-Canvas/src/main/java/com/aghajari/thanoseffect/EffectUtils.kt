@@ -111,8 +111,7 @@ internal object EffectUtils {
     }
 
     fun canDrawPixel(bitmap: Bitmap, x: Int, y: Int): Boolean {
-        val c = bitmap.getPixel(x, y)
-        return c != Color.BLACK && Color.alpha(c) > 10
+        return Color.alpha(bitmap.getPixel(x, y)) > 10
     }
 
     fun timeTuning(
