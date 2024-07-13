@@ -17,3 +17,5 @@ rootProject.name = "Thanos Effect"
 include(":app")
 include(":ThanosEffect-Canvas")
 include(":ThanosEffect-OpenGL")
+include(":ThanosEffect-Core")
+include(":ThanosEffect-Compose")

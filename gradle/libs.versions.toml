@@ -1,14 +1,17 @@
 [versions]
-agp = "8.2.2"
-kotlin = "1.9.22"
+agp = "8.4.1"
+kotlin = "2.0.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
-junitVersion = "1.1.5"
-espressoCore = "3.5.1"
+junitVersion = "1.2.1"
+espressoCore = "3.6.1"
 appcompat = "1.7.0"
 material = "1.12.0"
 activity = "1.9.0"
 constraintlayout = "2.1.4"
+activityCompose = "1.9.0"
+runtimeAndroid = "1.6.8"
+composeBeta = "1.7.0-beta05"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -19,9 +22,19 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+androidx-runtime-android = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtimeAndroid" }
+activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
+compose-ui = { module = "androidx.compose.ui:ui", version.ref = "composeBeta" }
+compose-runtime = { module = "androidx.compose.runtime:runtime", version.ref = "composeBeta" }
+compose-material = { module = "androidx.compose.material:material", version.ref = "composeBeta" }
+compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "composeBeta" }
+compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "composeBeta" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 
+[bundles]
+compose = ["compose-ui", "compose-runtime", "compose-material", "compose-ui-tooling-preview"]

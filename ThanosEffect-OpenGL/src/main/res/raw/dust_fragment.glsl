@@ -3,6 +3,7 @@
 precision highp float;
 
 uniform sampler2D viewTexture;
+uniform bool drawCircle;
 
 in vec4 fragColor;
 in float fraction;
@@ -15,9 +16,11 @@ void main() {
     if (fraction > 1.0) {
         discard;
     }
-    vec2 circCoord = 2.0 * gl_PointCoord - 1.0;
-    if (dot(circCoord, circCoord) > 1.0) {
-        discard;
+    if (drawCircle) {
+        vec2 circCoord = 2.0 * gl_PointCoord - 1.0;
+        if (dot(circCoord, circCoord) > 1.0) {
+            discard;
+        }
     }
 
     fragColorOut = fragColor;
