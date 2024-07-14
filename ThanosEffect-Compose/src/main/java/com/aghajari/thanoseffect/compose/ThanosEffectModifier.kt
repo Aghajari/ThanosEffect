@@ -12,6 +12,11 @@ import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
 
+/**
+ * Enables the provided thanos effect controller for this composable.
+ *
+ * @param controller The controller for managing the Thanos effect.
+ */
 fun Modifier.thanosEffect(
     controller: ThanosEffectCompose
 ): Modifier {
@@ -39,6 +44,12 @@ fun Modifier.thanosEffect(
         }
 }
 
+/**
+ * Create a new [ThanosEffectCompose] instance that will automatically be
+ * released when the Composable is disposed.
+ *
+ * @return a ThanosEffectCompose instance
+ */
 @Composable
 fun rememberThanosEffect(): ThanosEffectCompose {
     return remember { ThanosEffectCompose() }

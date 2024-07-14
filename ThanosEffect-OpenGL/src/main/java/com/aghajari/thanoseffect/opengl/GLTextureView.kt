@@ -24,6 +24,9 @@ import javax.microedition.khronos.egl.EGLSurface
 import kotlin.concurrent.Volatile
 import kotlin.random.Random
 
+/**
+ * A custom TextureView for rendering Thanos effects using OpenGL.
+ */
 internal class GLTextureView(
     context: Context,
 ) : ThanosEffectTextureView<GLViewRenderer>(context) {
@@ -58,13 +61,13 @@ internal class GLTextureView(
     override fun createViewRenderer(
         view: EffectedView,
         surfaceLocation: IntArray,
-        pending: Int,
+        pendingWeight: Int,
         renderConfigs: RenderConfigs
     ) = GLViewRenderer(
         view = view,
         surfaceLocation = surfaceLocation,
         inTime = elapsedTime,
-        sumOfPendingValues = pending,
+        sumOfPendingWeights = pendingWeight,
         configs = renderConfigs,
     )
 

@@ -4,6 +4,11 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.view.View
 
+/**
+ * Interface representing a view that can be used for Thanos effect animations.
+ * This interface has been designed to apply the Thanos effect on various types of surfaces,
+ * including Android Views, Composables, or even textures.
+ */
 interface EffectedView {
 
     val width: Int
@@ -13,9 +18,20 @@ interface EffectedView {
     val translationY: Float
 
     fun getLocationInWindow(location: IntArray)
+
+    /**
+     * Creates a bitmap representation of the view.
+     *
+     * @return A bitmap containing the view's drawing.
+     */
     fun createBitmap(): Bitmap
 }
 
+/**
+ * Extension function to convert a [View] into an [EffectedView].
+ *
+ * @return An instance of [EffectedView] that wraps the original [View].
+ */
 fun View.asEffectedView() = object : EffectedView {
     override val width: Int
         get() = getWidth()

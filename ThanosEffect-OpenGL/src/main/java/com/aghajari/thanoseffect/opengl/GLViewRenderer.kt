@@ -18,11 +18,20 @@ import java.nio.ShortBuffer
 import kotlin.math.max
 import kotlin.math.min
 
+/**
+ * Renderer class for handling OpenGL rendering of Thanos effects.
+ *
+ * @param view Reference to the view where the effect is applied.
+ * @param surfaceLocation Array containing the surface location.
+ * @param inTime The initial time for rendering.
+ * @param sumOfPendingWeights Used to optimize the number of particles generated.
+ * @param configs Configuration parameters for rendering.
+ */
 internal class GLViewRenderer(
     view: EffectedView,
     surfaceLocation: IntArray,
     private val inTime: Float,
-    sumOfPendingValues: Int = 0,
+    sumOfPendingWeights: Int = 0,
     private val configs: RenderConfigs,
 ) : ViewRenderer {
 
@@ -44,7 +53,7 @@ internal class GLViewRenderer(
     private var readySize = 0
 
     private val optimizedPerPx: Int
-    override val pendingValue: Int
+    override val weight: Int
 
     private var time = 0f
     private var nextRenderTime: Long = 0
@@ -65,8 +74,8 @@ internal class GLViewRenderer(
         bitmapWidth = bitmap.width
         bitmapHeight = bitmap.height
 
-        pendingValue = EffectUtils.calculatePendingSize(view)
-        optimizedPerPx = EffectUtils.optimizeSize(configs.perPx, sumOfPendingValues)
+        weight = EffectUtils.calculateWeight(view)
+        optimizedPerPx = EffectUtils.optimizeSize(configs.perPx, sumOfPendingWeights)
 
         src = floatArrayOf(0f, 0f, bitmapWidth.toFloat(), bitmapHeight.toFloat())
         srcNorm = floatArrayOf(0f, 0f, 1f, 1f)
@@ -82,7 +91,13 @@ internal class GLViewRenderer(
         maxLine = bitmapWidth / optimizedPerPx
     }
 
-
+    /**
+     * Updates the particle buffer for rendering.
+     *
+     * @param particles The particle buffer.
+     * @param deltaTime The time elapsed since the last update.
+     * @return `true` if rendering should continue, `false` otherwise.
+     */
     fun update(particles: FloatBuffer, deltaTime: Float): Boolean {
         if (buffer == null) {
             return false
@@ -152,6 +167,11 @@ internal class GLViewRenderer(
         }
     }
 
+    /**
+     * Checks if the rendering process is still running.
+     *
+     * @return `true` if rendering should continue, `false` otherwise.
+     */
     private fun isRunning(): Boolean {
         if (endRenderingTime == 0f) {
             return true
@@ -164,6 +184,11 @@ internal class GLViewRenderer(
         }
     }
 
+    /**
+     * Renders the next lines of particles if ready.
+     *
+     * @param particles The particle buffer.
+     */
     private fun renderNextLinesIfReady(particles: FloatBuffer) {
         val now = System.currentTimeMillis()
         if (now < nextRenderTime) {
@@ -265,12 +290,18 @@ internal class GLViewRenderer(
         }
     }
 
+    /**
+     * Updates the source and destination rectangles for rendering.
+     */
     private fun updateRect() {
         src[0] = animatedLineWidth.toFloat()
         dst[0] = dst[2] - bitmapWidth + src[0]
         normalizeSrc()
     }
 
+    /**
+     * Ends the rendering process.
+     */
     private fun endRendering() {
         readySize = currentParticleIndex
         line = maxLine
@@ -278,6 +309,9 @@ internal class GLViewRenderer(
         updateRect()
     }
 
+    /**
+     * Normalizes the source rectangle for rendering.
+     */
     private fun normalizeSrc() {
         srcNorm[0] = max(0.0f, src[0] / bitmapWidth)
         srcNorm[1] = src[1] / bitmapHeight
@@ -285,6 +319,9 @@ internal class GLViewRenderer(
         srcNorm[3] = src[3] / bitmapHeight
     }
 
+    /**
+     * Destroys the bitmap to free up memory.
+     */
     private fun destroyBitmap() {
         if (bitmap != null) {
             view = null
@@ -293,6 +330,12 @@ internal class GLViewRenderer(
         }
     }
 
+    /**
+     * Draws the particles using the provided handler.
+     *
+     * @param handlers The handler for rendering.
+     * @param drawOrderBuffer The buffer containing the draw order.
+     */
     fun draw(
         handlers: Handlers,
         drawOrderBuffer: ShortBuffer?
@@ -327,6 +370,9 @@ internal class GLViewRenderer(
         }
     }
 
+    /**
+     * Cleans up resources and stops rendering.
+     */
     fun die() {
         destroyBitmap()
         if (buffer != null) {

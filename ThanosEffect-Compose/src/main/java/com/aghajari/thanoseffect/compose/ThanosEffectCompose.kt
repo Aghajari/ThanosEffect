@@ -14,16 +14,29 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
+/**
+ * Class to manage and apply the Thanos effect in Jetpack Compose.
+ */
 class ThanosEffectCompose {
 
     internal var location: MutableState<Offset>? = null
     internal var graphicsLayer: GraphicsLayer? = null
 
+    /**
+     * The current state of the Thanos effect.
+     */
     val state = mutableStateOf(State.NONE)
 
+    /**
+     * Starts the Thanos effect.
+     *
+     * @param context The context in which the effect is applied.
+     * @param pendingWeight The pending weight for the effect.
+     * @param renderConfigs The configuration parameters for rendering the effect.
+     */
     suspend fun start(
         context: Context,
-        pending: Int = 0,
+        pendingWeight: Int = 0,
         renderConfigs: RenderConfigs = RenderConfigs.default(),
     ) {
         graphicsLayer?.toImageBitmap()?.let { image ->
@@ -42,7 +55,7 @@ class ThanosEffectCompose {
                 ThanosEffect.start(
                     context = context,
                     effectedView = view,
-                    pending = pending,
+                    pendingWeight = pendingWeight,
                     renderConfigs = renderConfigs,
                 )
             }
@@ -54,19 +67,42 @@ class ThanosEffectCompose {
         }
     }
 
+    /**
+     * Checks if the Thanos effect has started.
+     *
+     * @return `true` if the effect has started, `false` otherwise.
+     */
     fun hasEffectStarted(): Boolean = state.value == State.STARTED
+
+    /**
+     * Checks if the Thanos effect has been destroyed.
+     *
+     * @return `true` if the effect has been destroyed, `false` otherwise.
+     */
     fun hasDestroyed(): Boolean = state.value == State.DESTROYED
 
+    /**
+     * Clears the state of the Thanos effect.
+     */
     fun clear() {
         state.value = State.NONE
     }
 
+    /**
+     * Destroys the Thanos effect, releasing resources.
+     */
     fun destroy() {
         state.value = State.DESTROYED
         graphicsLayer = null
         location = null
     }
 
+    /**
+     * Extension function to convert a [Bitmap] to an [EffectedView] with the given offset.
+     *
+     * @param offset The offset to apply to the view.
+     * @return The converted [EffectedView].
+     */
     private fun Bitmap.asEffectedView(offset: Offset) = object : EffectedView {
 
         override val width: Int = getWidth()

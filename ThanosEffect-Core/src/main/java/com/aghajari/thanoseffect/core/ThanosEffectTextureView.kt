@@ -3,11 +3,13 @@ package com.aghajari.thanoseffect.core
 import android.content.Context
 import android.graphics.SurfaceTexture
 import android.view.TextureView
-import android.view.View
 import com.aghajari.thanoseffect.ThanosEffect
 import com.aghajari.thanoseffect.widget.EffectedView
 import java.util.LinkedList
 
+/**
+ * Abstract class representing a TextureView for rendering Thanos effects.
+ */
 abstract class ThanosEffectTextureView<VR : ViewRenderer>(
     context: Context,
 ) : TextureView(context) {
@@ -19,14 +21,14 @@ abstract class ThanosEffectTextureView<VR : ViewRenderer>(
     protected var destroyed = false
         private set
 
-    private var sumOfPendingValues = 0
+    private var sumOfWeights = 0
     private val checkDestroy = Runnable {
         if (destroyed.not() && isEmpty()) {
             destroyed = true
             thread?.halt()
             thread = null
             destroy()
-            ThanosEffect.destroy()
+            ThanosEffect.destroyTextureView()
         }
     }
 
@@ -75,9 +77,16 @@ abstract class ThanosEffectTextureView<VR : ViewRenderer>(
         )
     }
 
+    /**
+     * Attaches a new view renderer.
+     *
+     * @param view The view to attach.
+     * @param pendingWeight The pending weight after the view.
+     * @param renderConfigs The configuration parameters for rendering.
+     */
     fun attach(
         view: EffectedView,
-        pending: Int,
+        pendingWeight: Int,
         renderConfigs: RenderConfigs,
     ) {
         if (destroyed) {
@@ -88,57 +97,117 @@ abstract class ThanosEffectTextureView<VR : ViewRenderer>(
             val renderer = createViewRenderer(
                 view = view,
                 surfaceLocation = location,
-                pending = pending + sumOfPendingValues,
+                pendingWeight = pendingWeight + sumOfWeights,
                 renderConfigs = renderConfigs,
             )
             viewRenderers.add(renderer)
-            sumOfPendingValues += renderer.pendingValue
+            sumOfWeights += renderer.weight
         }
         onNewViewRendererAttached()
     }
 
+    /**
+     * Pauses or resumes the rendering thread.
+     *
+     * @param pause `true` to pause, `false` to resume.
+     */
     fun pause(pause: Boolean) {
         thread?.paused = pause
     }
 
+    /**
+     * Stops the rendering thread.
+     */
     protected fun stopThread() {
         thread?.halt()
     }
 
-    protected fun forceDestroy() {
+    /**
+     * Forces the destruction of the renderer.
+     */
+    fun forceDestroy() {
+        clear()
         checkDestroy.run()
     }
 
+    /**
+     * Clears all view renderers.
+     */
     private fun clear() {
         synchronized(viewRenderers) {
             viewRenderers.clear()
         }
     }
 
+    /**
+     * Checks if there are no view renderers.
+     *
+     * @return `true` if there are no view renderers, `false` otherwise.
+     */
     private fun isEmpty(): Boolean {
         synchronized(viewRenderers) {
             return viewRenderers.isEmpty()
         }
     }
 
+    /**
+     * Removes the weight of a renderer.
+     *
+     * @param renderer The renderer to remove weight from.
+     */
     protected fun removeRendererWeight(renderer: ViewRenderer) {
-        sumOfPendingValues -= renderer.pendingValue
+        sumOfWeights -= renderer.weight
     }
 
+    /**
+     * Creates a view renderer.
+     *
+     * @param view The view to render.
+     * @param surfaceLocation The location of the surface.
+     * @param pendingWeight The pending weight of the surface.
+     * @param renderConfigs The configuration parameters for rendering.
+     * @return The created view renderer.
+     */
     protected abstract fun createViewRenderer(
         view: EffectedView,
         surfaceLocation: IntArray,
-        pending: Int,
+        pendingWeight: Int,
         renderConfigs: RenderConfigs
     ): VR
 
+    /**
+     * Destroys the renderer.
+     */
     protected abstract fun destroy()
 
+    /**
+     * Initializes the renderer. Calls once the renderer thread started.
+     */
     protected abstract fun initialize()
+
+    /**
+     * Draws a frame.
+     *
+     * @param deltaTime The time elapsed since the last frame.
+     */
     protected abstract fun drawFrame(deltaTime: Float)
+
+    /**
+     * Cleans up resources when the thread dies.
+     */
     protected abstract fun die()
 
+    /**
+     * Resizes the renderer.
+     *
+     * @param width The new width.
+     * @param height The new height.
+     */
     protected open fun resize(width: Int, height: Int) {}
+
+    /**
+     * Called when a new view renderer is attached.
+     */
     protected open fun onNewViewRendererAttached() {}
 
     private inner class EffectRendererThread(

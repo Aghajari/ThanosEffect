@@ -6,6 +6,9 @@ import android.widget.FrameLayout
 import com.aghajari.thanoseffect.ThanosEffectRenderer
 import com.aghajari.thanoseffect.core.ThanosEffectTextureView
 
+/**
+ * An implementation of [ThanosEffectRenderer] that uses OpenGL for rendering effects.
+ */
 object ThanosEffectOpenGLRenderer : ThanosEffectRenderer {
 
     override fun createTextureView(rootView: ViewGroup): ThanosEffectTextureView<*> {

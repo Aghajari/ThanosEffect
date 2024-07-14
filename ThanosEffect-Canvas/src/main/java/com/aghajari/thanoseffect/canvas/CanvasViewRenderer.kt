@@ -12,10 +12,18 @@ import com.aghajari.thanoseffect.core.RenderConfigs
 import com.aghajari.thanoseffect.widget.EffectedView
 import java.lang.ref.WeakReference
 
+/**
+ * Renderer for creating particle effects using Canvas.
+ *
+ * @param view Reference to the view where the effect is applied.
+ * @param surfaceLocation Array containing the surface location.
+ * @param sumOfPendingWeights Used to optimize the number of particles generated.
+ * @param configs Configuration parameters for rendering.
+ */
 internal class CanvasViewRenderer(
     view: EffectedView,
     surfaceLocation: IntArray,
-    sumOfPendingValues: Int = 0,
+    sumOfPendingWeights: Int = 0,
     private val configs: RenderConfigs,
 ) : ViewRenderer {
 
@@ -38,7 +46,7 @@ internal class CanvasViewRenderer(
     private var currentParticleIndex = 0
 
     private val optimizedPerPx: Int
-    override val pendingValue: Int
+    override val weight: Int
 
     private var time = 0f
     private var nextRenderTime: Long = 0
@@ -52,8 +60,8 @@ internal class CanvasViewRenderer(
 
         bitmap = view.createBitmap()
 
-        pendingValue = EffectUtils.calculatePendingSize(view)
-        optimizedPerPx = EffectUtils.optimizeSize(configs.perPx, sumOfPendingValues)
+        weight = EffectUtils.calculateWeight(view)
+        optimizedPerPx = EffectUtils.optimizeSize(configs.perPx, sumOfPendingWeights)
 
         src = Rect(0, 0, bitmap.width, bitmap.height)
         dst = Rect(
@@ -69,6 +77,14 @@ internal class CanvasViewRenderer(
         renderNextLinesIfReady()
     }
 
+    /**
+     * Draws the current state of the particles on the given canvas.
+     *
+     * @param canvas Canvas to draw on.
+     * @param paint Paint used for drawing.
+     * @param deltaTime Time elapsed since the last update.
+     * @return `true` if rendering should continue, `false` otherwise.
+     */
     fun draw(canvas: Canvas, paint: Paint, deltaTime: Float): Boolean {
         time += deltaTime
 
@@ -124,6 +140,9 @@ internal class CanvasViewRenderer(
         }
     }
 
+    /**
+     * Renders the next lines of particles if the current time exceeds the next render time.
+     */
     fun renderNextLinesIfReady() {
         val now = System.currentTimeMillis()
         if (now < nextRenderTime) {

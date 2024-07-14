@@ -8,6 +8,9 @@ import com.aghajari.thanoseffect.core.ThanosEffectTextureView
 import com.aghajari.thanoseffect.core.RenderConfigs
 import com.aghajari.thanoseffect.widget.EffectedView
 
+/**
+ * A custom TextureView for rendering Thanos effects using Android Canvas API.
+ */
 internal class CanvasTextureView(
     context: Context,
 ) : ThanosEffectTextureView<CanvasViewRenderer>(context) {
@@ -20,12 +23,12 @@ internal class CanvasTextureView(
     override fun createViewRenderer(
         view: EffectedView,
         surfaceLocation: IntArray,
-        pending: Int,
+        pendingWeight: Int,
         renderConfigs: RenderConfigs
     ) = CanvasViewRenderer(
         view = view,
         surfaceLocation = surfaceLocation,
-        sumOfPendingValues = pending,
+        sumOfPendingWeights = pendingWeight,
         configs = renderConfigs,
     )
 
