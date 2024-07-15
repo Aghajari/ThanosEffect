@@ -1,5 +1,6 @@
 package com.aghajari.thanoseffect.compose
 
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -7,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.layer.GraphicsLayer
 import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -18,16 +20,20 @@ import androidx.compose.ui.layout.positionInWindow
  * @param controller The controller for managing the Thanos effect.
  */
 fun Modifier.thanosEffect(
-    controller: ThanosEffectCompose
+    controller: ThanosEffectCompose,
+    block: GraphicsLayer.() -> Unit = {},
 ): Modifier {
     return this
         .composed {
-            if (controller.hasDestroyed()) {
+            if (controller.hasEffectStarted()) {
                 return@composed Modifier
             }
 
             controller.location = remember { mutableStateOf(Offset.Zero) }
-            controller.graphicsLayer = rememberGraphicsLayer()
+            controller.graphicsLayer = rememberGraphicsLayer().apply {
+                clip = true
+                block.invoke(this)
+            }
 
             Modifier
                 .onGloballyPositioned { coordinates ->

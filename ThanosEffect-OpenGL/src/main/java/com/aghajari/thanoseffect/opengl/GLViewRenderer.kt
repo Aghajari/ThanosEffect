@@ -33,6 +33,7 @@ internal class GLViewRenderer(
     private val inTime: Float,
     sumOfPendingWeights: Int = 0,
     private val configs: RenderConfigs,
+    override var onFirstFrameRenderedCallback: (() -> Unit)?,
 ) : ViewRenderer {
 
     private val location = IntArray(2)
@@ -165,6 +166,7 @@ internal class GLViewRenderer(
         if (saved) {
             canvas.restoreToCount(save)
         }
+        onNewFrameRendered()
     }
 
     /**
@@ -343,6 +345,7 @@ internal class GLViewRenderer(
         if (buffer == null) {
             return
         }
+        onNewFrameRendered()
 
         var v: EffectedView? = null
         if (view != null) {
@@ -374,6 +377,7 @@ internal class GLViewRenderer(
      * Cleans up resources and stops rendering.
      */
     fun die() {
+        onFirstFrameRenderedCallback = null
         destroyBitmap()
         if (buffer != null) {
             safeRun { GLES31.glDeleteBuffers(1, buffer, 0) }

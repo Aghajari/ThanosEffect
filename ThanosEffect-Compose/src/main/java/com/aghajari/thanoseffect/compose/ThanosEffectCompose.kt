@@ -11,7 +11,6 @@ import com.aghajari.thanoseffect.ThanosEffect
 import com.aghajari.thanoseffect.core.RenderConfigs
 import com.aghajari.thanoseffect.widget.EffectedView
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 /**
@@ -25,7 +24,7 @@ class ThanosEffectCompose {
     /**
      * The current state of the Thanos effect.
      */
-    val state = mutableStateOf(State.NONE)
+    private val state = mutableStateOf(State.NONE)
 
     /**
      * Starts the Thanos effect.
@@ -38,14 +37,17 @@ class ThanosEffectCompose {
         context: Context,
         pendingWeight: Int = 0,
         renderConfigs: RenderConfigs = RenderConfigs.default(),
+        onFirstFrameRenderedCallback: () -> Unit = {},
     ) {
-        graphicsLayer?.toImageBitmap()?.let { image ->
-            if (state.value != State.NONE) {
-                return
-            }
+        if (state.value != State.NONE) {
+            return
+        }
+
+        graphicsLayer?.let { graphicsLayer ->
             state.value = State.STARTING
 
-            val view = image.asAndroidBitmap()
+            val view = graphicsLayer.toImageBitmap()
+                .asAndroidBitmap()
                 .copy(Bitmap.Config.ARGB_8888, false)
                 .asEffectedView(
                     offset = location?.value ?: Offset.Zero,
@@ -57,12 +59,11 @@ class ThanosEffectCompose {
                     effectedView = view,
                     pendingWeight = pendingWeight,
                     renderConfigs = renderConfigs,
+                    onFirstFrameRenderedCallback = {
+                        destroy()
+                        onFirstFrameRenderedCallback.invoke()
+                    }
                 )
-            }
-
-            delay(100)
-            if (state.value == State.STARTING) {
-                state.value = State.STARTED
             }
         }
     }
@@ -72,30 +73,17 @@ class ThanosEffectCompose {
      *
      * @return `true` if the effect has started, `false` otherwise.
      */
-    fun hasEffectStarted(): Boolean = state.value == State.STARTED
-
-    /**
-     * Checks if the Thanos effect has been destroyed.
-     *
-     * @return `true` if the effect has been destroyed, `false` otherwise.
-     */
-    fun hasDestroyed(): Boolean = state.value == State.DESTROYED
-
-    /**
-     * Clears the state of the Thanos effect.
-     */
-    fun clear() {
-        state.value = State.NONE
-    }
+    fun hasEffectStarted(): Boolean = state.value == State.DESTROYED
 
     /**
      * Destroys the Thanos effect, releasing resources.
      */
-    fun destroy() {
+    private fun destroy() {
         state.value = State.DESTROYED
         graphicsLayer = null
         location = null
     }
+
 
     /**
      * Extension function to convert a [Bitmap] to an [EffectedView] with the given offset.
@@ -120,10 +108,9 @@ class ThanosEffectCompose {
         }
     }
 
-    enum class State {
+    private enum class State {
         NONE,
         STARTING,
-        STARTED,
         DESTROYED
     }
 }

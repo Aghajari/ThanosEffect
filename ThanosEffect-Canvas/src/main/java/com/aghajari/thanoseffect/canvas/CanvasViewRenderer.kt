@@ -25,6 +25,7 @@ internal class CanvasViewRenderer(
     surfaceLocation: IntArray,
     sumOfPendingWeights: Int = 0,
     private val configs: RenderConfigs,
+    override var onFirstFrameRenderedCallback: (() -> Unit)?,
 ) : ViewRenderer {
 
     private var view: WeakReference<EffectedView>? = WeakReference(view)
@@ -133,6 +134,7 @@ internal class CanvasViewRenderer(
         if (saved) {
             canvas.restoreToCount(save)
         }
+        onNewFrameRendered()
         return if (endRenderingTime == 0f) {
             true
         } else {

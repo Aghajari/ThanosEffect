@@ -83,11 +83,13 @@ abstract class ThanosEffectTextureView<VR : ViewRenderer>(
      * @param view The view to attach.
      * @param pendingWeight The pending weight after the view.
      * @param renderConfigs The configuration parameters for rendering.
+     * @param onFirstFrameRenderedCallback A callback to call once first frame rendered.
      */
     fun attach(
         view: EffectedView,
         pendingWeight: Int,
         renderConfigs: RenderConfigs,
+        onFirstFrameRenderedCallback: () -> Unit,
     ) {
         if (destroyed) {
             return
@@ -99,6 +101,7 @@ abstract class ThanosEffectTextureView<VR : ViewRenderer>(
                 surfaceLocation = location,
                 pendingWeight = pendingWeight + sumOfWeights,
                 renderConfigs = renderConfigs,
+                onFirstFrameRenderedCallback = onFirstFrameRenderedCallback,
             )
             viewRenderers.add(renderer)
             sumOfWeights += renderer.weight
@@ -166,13 +169,15 @@ abstract class ThanosEffectTextureView<VR : ViewRenderer>(
      * @param surfaceLocation The location of the surface.
      * @param pendingWeight The pending weight of the surface.
      * @param renderConfigs The configuration parameters for rendering.
+     * @param onFirstFrameRenderedCallback A callback to call once first frame rendered.
      * @return The created view renderer.
      */
     protected abstract fun createViewRenderer(
         view: EffectedView,
         surfaceLocation: IntArray,
         pendingWeight: Int,
-        renderConfigs: RenderConfigs
+        renderConfigs: RenderConfigs,
+        onFirstFrameRenderedCallback: () -> Unit,
     ): VR
 
     /**

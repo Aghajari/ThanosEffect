@@ -62,19 +62,21 @@ internal class GLTextureView(
         view: EffectedView,
         surfaceLocation: IntArray,
         pendingWeight: Int,
-        renderConfigs: RenderConfigs
+        renderConfigs: RenderConfigs,
+        onFirstFrameRenderedCallback: () -> Unit,
     ) = GLViewRenderer(
         view = view,
         surfaceLocation = surfaceLocation,
         inTime = elapsedTime,
         sumOfPendingWeights = pendingWeight,
         configs = renderConfigs,
+        onFirstFrameRenderedCallback = onFirstFrameRenderedCallback,
     )
 
     override fun destroy() {
         synchronized(viewRenderers) {
-            for (vp in viewRenderers) {
-                vp.die()
+            viewRenderers.forEach {
+                it.die()
             }
             viewRenderers.clear()
         }

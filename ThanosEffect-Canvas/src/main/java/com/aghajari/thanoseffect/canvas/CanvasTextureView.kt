@@ -24,12 +24,14 @@ internal class CanvasTextureView(
         view: EffectedView,
         surfaceLocation: IntArray,
         pendingWeight: Int,
-        renderConfigs: RenderConfigs
+        renderConfigs: RenderConfigs,
+        onFirstFrameRenderedCallback: () -> Unit,
     ) = CanvasViewRenderer(
         view = view,
         surfaceLocation = surfaceLocation,
         sumOfPendingWeights = pendingWeight,
         configs = renderConfigs,
+        onFirstFrameRenderedCallback = onFirstFrameRenderedCallback,
     )
 
     override fun destroy() {

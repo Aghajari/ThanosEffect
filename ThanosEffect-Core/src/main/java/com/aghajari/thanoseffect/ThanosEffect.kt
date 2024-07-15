@@ -25,6 +25,7 @@ object ThanosEffect {
      * @param pendingWeight The pending weight of the view.
      * @param autoDelete Whether to automatically delete the view after applying the effect.
      * @param renderConfigs The configuration parameters for rendering the effect.
+     * @param onFirstFrameRenderedCallback Calls once the first frame rendered.
      * @throws NullPointerException If the renderer is not set.
      */
     fun start(
@@ -32,15 +33,22 @@ object ThanosEffect {
         pendingWeight: Int = 0,
         autoDelete: Boolean = true,
         renderConfigs: RenderConfigs = RenderConfigs.default(),
+        onFirstFrameRenderedCallback: () -> Unit = {},
     ) {
         initialize(view.context)
-        textureView?.attach(view.asEffectedView(), pendingWeight, renderConfigs)
-
-        if (autoDelete) {
-            view.postDelayed({
+        val firstRenderCallback = if (autoDelete) {
+            {
                 (view.parent as? ViewGroup)?.removeView(view)
-            }, 100)
-        }
+                onFirstFrameRenderedCallback.invoke()
+            }
+        } else onFirstFrameRenderedCallback
+
+        textureView?.attach(
+            view.asEffectedView(),
+            pendingWeight,
+            renderConfigs,
+            firstRenderCallback
+        )
     }
 
     /**
@@ -50,6 +58,7 @@ object ThanosEffect {
      * @param effectedView The view to apply the effect on.
      * @param pendingWeight The pending weight of the view.
      * @param renderConfigs The configuration parameters for rendering the effect.
+     * @param onFirstFrameRenderedCallback Calls once the first frame rendered.
      * @throws NullPointerException If the renderer is not set.
      */
     fun start(
@@ -57,9 +66,15 @@ object ThanosEffect {
         effectedView: EffectedView,
         pendingWeight: Int = 0,
         renderConfigs: RenderConfigs = RenderConfigs.default(),
+        onFirstFrameRenderedCallback: () -> Unit = {}
     ) {
         initialize(context)
-        textureView?.attach(effectedView, pendingWeight, renderConfigs)
+        textureView?.attach(
+            effectedView,
+            pendingWeight,
+            renderConfigs,
+            onFirstFrameRenderedCallback
+        )
     }
 
     /**
