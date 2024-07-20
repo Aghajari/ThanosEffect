@@ -47,7 +47,7 @@ object ThanosEffect {
             view.asEffectedView(),
             pendingWeight,
             renderConfigs,
-            firstRenderCallback
+            firstRenderCallback,
         )
     }
 
@@ -73,7 +73,7 @@ object ThanosEffect {
             effectedView,
             pendingWeight,
             renderConfigs,
-            onFirstFrameRenderedCallback
+            onFirstFrameRenderedCallback,
         )
     }
 
@@ -103,8 +103,8 @@ object ThanosEffect {
         EffectUtils.runOnUIThread {
             textureView?.let {
                 renderer?.removeTextureView(it)
+                textureView = null
             }
-            textureView = null
         }
     }
 
