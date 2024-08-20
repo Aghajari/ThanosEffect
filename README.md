@@ -77,3 +77,5 @@ Note that the formulas in the picture are simplified, and the actual implementat
 You can watch a detailed tutorial on how to implement the ThanosEffect here. This tutorial covers the step-by-step process, explaining both the Canvas and OpenGL implementations, and provides insights into optimizing performance and adding randomness for a more realistic effect.
 
 By following the tutorial, you'll gain a deeper understanding of the concepts and techniques used to create complex animations.
+
+https://github.com/Aghajari/ThanosEffect/releases/download/1.0.0/Animatins-01-Video.mov
