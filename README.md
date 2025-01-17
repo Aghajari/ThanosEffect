@@ -78,4 +78,4 @@ You can watch a detailed tutorial on how to implement the ThanosEffect here. Thi
 
 By following the tutorial, you'll gain a deeper understanding of the concepts and techniques used to create complex animations.
 
-https://github.com/Aghajari/ThanosEffect/releases/download/1.0.0/Animatins-01-Video.mov
+https://www.youtube.com/watch?v=j9XH4JP60yM (Farsi)
